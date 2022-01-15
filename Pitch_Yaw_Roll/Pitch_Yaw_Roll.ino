@@ -77,34 +77,29 @@ void kinematics (int leg, float x, float y, float z, float roll, float pitch, fl
     // leg 2  : front right
     // leg 3  : back left
     // leg 4  : back right
+    
+    // moving the foot sideways on the end plane
+    float lengthY;
+    float hipAngle1a;
+    float hipAngle1b;
+    float hipAngle1;
+    float hipAngle1Degrees;
+    float hipHyp;
 
-// TO BE UNDERSTOOD
+    // moving the foot forwards or backwardes in the side plane
+    float shoulderAngle2;
+    float shoulderAngle2Degrees;
+    float z2;
 
-//    // moving the foot sideways on the end plane
-//    float lengthY;
-//    float hipAngle1a;
-//    float hipAngle1b;
-//    float hipAngle1;
-//    float hipAngle1Degrees;
-//    float hipHyp;
-//
-//    // moving the foot forwards or backwardes in the side plane
-//    float shoulderAngle2;
-//    float shoulderAngle2Degrees;
-//    float z2;
-//
-//    // side plane of individual leg only
-//    #define shinLength 200     
-//    #define thighLength 200
-//    float z3;
-//    float shoulderAngle1;
-//    float shoulderAngle1Degrees;
-//    float shoulderAngle1a;   
-//    float shoulderAngle1b;
-//    float shoulderAngle1c;
-//    float shoulderAngle1d;
-//    float kneeAngle;  
-//    float kneeAngleDegrees; 
+    // side plane of individual leg only
+    #define shinLength 200     
+    #define thighLength 200
+    float z3;
+    float shoulderAngle1;
+    float shoulderAngle1Degrees;
+    float shoulderAngle1a;   
+    float kneeAngle;  
+    float kneeAngleDegrees; 
 
     // *** ROTATION AXIS
 
@@ -284,85 +279,93 @@ void kinematics (int leg, float x, float y, float z, float roll, float pitch, fl
     }
 
 
+    // *** TRANSLATION AXIS ***
 
-// TO BE UNDERSTOOD
-//
-//    // *** TRANSLATION AXIS ***
-//
-//    // calculate the hip joint and new leg length based on how far the robot moves sideways
-//    hipAngle1 = atan(yy1/zz1);    
-//    hipAngle1Degrees = ((hipAngle1 * (180/PI)));   // convert to degrees
-//    z2 = zz1/cos(hipAngle1);
-//
-//    // ****************
-//
-//    // calculate the shoulder joint offset and new leg length based on now far the foot moves forward/backwards
-//    shoulderAngle2 = atan(xx1/z2);     // calc how much extra to add to the shoulder joint
-//    shoulderAngle2Degrees = shoulderAngle2 * (180/PI);
-//    z3 = z2/cos(shoulderAngle2);     // calc new leg length to feed to the next bit of code below
-//
-//    // ****************
-//
-//    // calculate leg length based on shin/thigh length and knee and shoulder angle
-//    shoulderAngle1a = sq(thighLength) + sq(z3) - sq(shinLength);
-//    shoulderAngle1b = 2 * thighLength * z3;
-//    shoulderAngle1c = shoulderAngle1a / shoulderAngle1b;
-//    shoulderAngle1 = acos(shoulderAngle1c);     // radians
-//    kneeAngle = PI - (shoulderAngle1 *2);       // radians
-//
-//    //calc degrees from angles
-//    shoulderAngle1Degrees = shoulderAngle1 * (180/PI);    // degrees
-//    kneeAngleDegrees = kneeAngle * (180/PI);              // degrees  
+    // calculate the hip joint and new leg length based on how far the robot moves sideways
+    hipAngle1 = atan(yy1/zz1);    
+    hipAngle1Degrees = ((hipAngle1 * (180/PI)));   // convert to degrees
+    z2 = zz1/cos(hipAngle1); // new leg length for next part
+
+    // ****************
+
+    // calculate the shoulder joint offset and new leg length based on how far the foot moves forward/backwards
+    shoulderAngle2 = atan(xx1/z2);     // calc how much extra to add to the shoulder joint
+    shoulderAngle2Degrees = shoulderAngle2 * (180/PI);
+    z3 = z2/cos(shoulderAngle2);     // calc new leg length to feed to the next bit of code below
+
+    // ****************
+
+    // calculate leg length based on shin/thigh length and knee and shoulder angle
+    shoulderAngle1 = acos( (sq(thighLength) + sq(z3) - sq(shinLength))/(2*thighLength*z3) ) ; //Law of cosines
+    kneeAngle = PI - (shoulderAngle1 *2);       // radians
+    // NOTE NEED TO UNDERSTAND KNEE ANGLE I DON'T GET IT RIGHT NOW
+    // NOTE NEED TO UNDERSTAND KNEE ANGLE I DON'T GET IT RIGHT NOW
+    // NOTE NEED TO UNDERSTAND KNEE ANGLE I DON'T GET IT RIGHT NOW
+
+    
+
+    //calc degrees from angles
+    shoulderAngle1Degrees = shoulderAngle1 * (180/PI);    // degrees
+    kneeAngleDegrees = kneeAngle * (180/PI);              // degrees  
+
+    
 
 
 
-//TO BE UNDERSTOOD
-    // write to joints 
+     // write to joints 
 
-//    if (leg == 1) {     // front right
-//        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * 55.555555; // convert to encoder counts
-//        int shoulderAngle2Counts = shoulderAngle2Degrees * 55.555555; // convert to encoder counts
-//        int shoulderAngleCounts = shoulderAngle1Counts + shoulderAngle2Counts;
-//        int kneeAngleCounts = (kneeAngleDegrees-90) * 55.555555; // convert to encoder counts 
-//        int hipAngleCounts = hipAngle1Degrees * 55.555555;    // convert to encoder counts       
-//        driveJoints (60, shoulderAngleCounts);    // front right shoulder
-//        driveJoints (61, kneeAngleCounts);    // front right knee  
-//        driveJoints (41, hipAngleCounts);     // front right hip
-//    }
-//
-//    else if (leg == 2) {     // front left
-//        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * 55.555555; // convert to encoder counts
-//        int shoulderAngle2Counts = shoulderAngle2Degrees * 55.555555; // convert to encoder counts
-//        int shoulderAngleCounts = shoulderAngle1Counts + shoulderAngle2Counts;
-//        int kneeAngleCounts = (kneeAngleDegrees-90) * 55.555555; // convert to encoder counts 
-//        int hipAngleCounts = hipAngle1Degrees * 55.555555;    // convert to encoder counts        
-//        driveJoints (50, shoulderAngleCounts);    // front left shoulder
-//        driveJoints (51, kneeAngleCounts);    // front left knee
-//        driveJoints (40, hipAngleCounts);     // front left hip
-//    }
-//
-//    else if (leg == 3) {     // back left
-//        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * 55.555555; // convert to encoder counts
-//        int shoulderAngle2Counts = shoulderAngle2Degrees * 55.555555; // convert to encoder counts
-//        int shoulderAngleCounts = shoulderAngle1Counts - shoulderAngle2Counts;
-//        int kneeAngleCounts = (kneeAngleDegrees-90) * 55.555555; // convert to encoder counts 
-//        int hipAngleCounts = hipAngle1Degrees * 55.555555;    // convert to encoder counts        
-//        driveJoints (30, shoulderAngleCounts);    // back left shoulder
-//        driveJoints (31, kneeAngleCounts);    // back left knee
-//        driveJoints (10, hipAngleCounts);     // back left hip
-//        
-//    }
-//
-//    else if (leg == 4) {     // back right
-//        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * 55.555555; // convert to encoder counts
-//        int shoulderAngle2Counts = shoulderAngle2Degrees * 55.555555; // convert to encoder counts
-//        int shoulderAngleCounts = shoulderAngle1Counts - shoulderAngle2Counts;
-//        int kneeAngleCounts = (kneeAngleDegrees-90) * 55.555555; // convert to encoder counts 
-//        int hipAngleCounts = hipAngle1Degrees * 55.555555;    // convert to encoder counts        
-//        driveJoints (20, shoulderAngleCounts);    // back right shoulder
-//        driveJoints (21, kneeAngleCounts);    // back right knee
-//        driveJoints (11, hipAngleCounts);     // back right hip
-//    }
+     // careful of the data that you pass into the motors (whether its positive or negative)
+
+     // convert data from angles to encoder counts; not entirely sure how this would work because not sure how motors work but assuming its same as previous, would be something like:
+
+     int encoderValue = 2000;
+     int angleToEncoder = encoderValue/360;
+     
+
+    if (leg == 1) {     // front right
+        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * angleToEncoder; // convert to encoder counts
+        int shoulderAngle2Counts = shoulderAngle2Degrees * angleToEncoder; // convert to encoder counts
+        int shoulderAngleCounts = shoulderAngle1Counts + shoulderAngle2Counts;
+        int kneeAngleCounts = (kneeAngleDegrees-90) * angleToEncoder; // convert to encoder counts 
+        int hipAngleCounts = hipAngle1Degrees * angleToEncoder;    // convert to encoder counts       
+        driveJoints (60, shoulderAngleCounts);    // front right shoulder
+        driveJoints (61, kneeAngleCounts);    // front right knee  
+        driveJoints (41, hipAngleCounts);     // front right hip
+    }
+
+    else if (leg == 2) {     // front left
+        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * angleToEncoder; // convert to encoder counts
+        int shoulderAngle2Counts = shoulderAngle2Degrees * angleToEncoder; // convert to encoder counts
+        int shoulderAngleCounts = shoulderAngle1Counts + shoulderAngle2Counts;
+        int kneeAngleCounts = (kneeAngleDegrees-90) * angleToEncoder; // convert to encoder counts 
+        int hipAngleCounts = hipAngle1Degrees * angleToEncoder;    // convert to encoder counts        
+        driveJoints (50, shoulderAngleCounts);    // front left shoulder
+        driveJoints (51, kneeAngleCounts);    // front left knee
+        driveJoints (40, hipAngleCounts);     // front left hip
+    }
+
+    else if (leg == 3) {     // back left
+        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * angleToEncoder; // convert to encoder counts
+        int shoulderAngle2Counts = shoulderAngle2Degrees * angleToEncoder; // convert to encoder counts
+        int shoulderAngleCounts = shoulderAngle1Counts - shoulderAngle2Counts;
+        int kneeAngleCounts = (kneeAngleDegrees-90) * angleToEncoder; // convert to encoder counts 
+        int hipAngleCounts = hipAngle1Degrees * angleToEncoder;    // convert to encoder counts        
+        driveJoints (30, shoulderAngleCounts);    // back left shoulder
+        driveJoints (31, kneeAngleCounts);    // back left knee
+        driveJoints (10, hipAngleCounts);     // back left hip
+        
+    }
+
+    else if (leg == 4) {     // back right
+        int shoulderAngle1Counts = (shoulderAngle1Degrees-45) * angleToEncoder; // convert to encoder counts
+        int shoulderAngle2Counts = shoulderAngle2Degrees * angleToEncoder; // convert to encoder counts
+        int shoulderAngleCounts = shoulderAngle1Counts - shoulderAngle2Counts;
+        int kneeAngleCounts = (kneeAngleDegrees-90) * angleToEncoder; // convert to encoder counts 
+        int hipAngleCounts = hipAngle1Degrees * angleToEncoder;    // convert to encoder counts        
+        driveJoints (20, shoulderAngleCounts);    // back right shoulder
+        driveJoints (21, kneeAngleCounts);    // back right knee
+        driveJoints (11, hipAngleCounts);     // back right hip
+    }
 
 
 
