@@ -317,6 +317,7 @@ void kinematics (int leg, float x, float y, float z, float roll, float pitch, fl
      // careful of the data that you pass into the motors (whether its positive or negative)
 
      // convert data from angles to encoder counts; not entirely sure how this would work because not sure how motors work but assuming its same as previous, would be something like:
+     // HERE, come back here for encoderValue and to make sure everything makes sense
 
      int encoderValue = 2000;
      int angleToEncoder = encoderValue/360;
